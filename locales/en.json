@@ -1,0 +1,21 @@
+{
+  "home": {
+    "login": "Login"
+  },
+  "auth": {
+    "login": "Login",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
+  "form": {
+    "submit": "Submit",
+    "create": "Create",
+    "update": "Update",
+    "contactForm": "CONTACT FORM",
+    "email": "E-Mail",
+    "name": "Name",
+    "phone": "Phone",
+    "kvkk": "I consent to the saving of personal data.",
+    "submitreq": "Send"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "home": {
+    "login": "Oturum Aç"
+  },
+  "auth": {
+    "login": "Oturum Aç",
+    "cancel": "Vazgeç",
+    "submit": "Oturum Aç"
+  },
+  "message": {
+    "sending": "Kaydın Alınıyor, biraz bekler misin?",
+    "success": "Kaydın Tamamlandı. En kısa sürede sana geri dönüş yapacağız.",
+    "error": "Bir hata oluştu... Tekrar dener misin ?"
+  },
+  "form": {
+    "submit": "Onayla",
+    "create": "Oluştur",
+    "update": "Güncelle",
+    "contactForm": "İLETİŞİM FORMU",
+    "email": "E-Posta",
+    "name": "İsim",
+    "phone": "Telefon",
+    "kvkk": "Kişisel verilerimin kaydedilmesini onaylıyorum.",
+    "submitreq": "Gönder"
+  }
+}

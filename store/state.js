@@ -1,6 +1,7 @@
 export default () => ({
   cdnImgUrl: 'https://canvas-cdn.s3.eu-west-2.amazonaws.com/img/istasyonyurtlari/',
-  pariette: 'https://parapi.pariette.com/api/',
+  // pariette: 'https://pardev.pariette.com/api/',
+  pariette: 'http://127.0.0.1:8000/api/',
   token: '113VP3nHVC34ZrizRsF7TDmQlwJ3DwitIqLwzWhKr7m3NE8wVxGMsdC8CizAmKIq',
   authUser: null,
   locales: ['tr'],

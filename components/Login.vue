@@ -18,9 +18,7 @@
     </b-row>
     <b-row class="asc__su-auth-submit mt-5">
       <b-col cols="4">
-        <b-button variant="danger" size="xs" type="button" @click="closeModal()">
-          {{ $t('auth.cancel') }}
-        </b-button>
+        &nbsp;
       </b-col>
       <b-col cols="8" class="text-right">
         <b-button variant="success" size="lg" type="button" @click="submit()">
@@ -45,9 +43,6 @@ export default {
   },
   computed: mapState(['pariette', 'token', 'authUser']),
   methods: {
-    closeModal () {
-      this.$store.commit('modal', false)
-    },
     submit () {
       if (this.$v.form.$invalid) {
         alert('validate')

@@ -12,6 +12,9 @@ export default {
   SEND_ERROR (state, payload) {
     this.$toast.error(payload)
   },
+  LOCATION_HREF (payload) {
+    this.$router.push({ name: payload })
+  },
   SET_LANG (state, payload) {
     i18n.locale = state.settings.lang
     if (payload) {

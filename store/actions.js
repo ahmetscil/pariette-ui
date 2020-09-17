@@ -29,6 +29,7 @@ export default {
     try {
       const user = await axios.post(`${state.pariette}auth/login`, data)
       commit('SET_USER', user.data)
+      commit('LOCATION_HREF', 'admin')
     } catch (error) {
       alert(error)
       if (error.response && error.response.status === 401) {

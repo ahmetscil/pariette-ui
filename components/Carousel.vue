@@ -50,6 +50,10 @@
 import { mapState } from 'vuex'
 export default {
   props: {
+    admin: {
+      type: Array,
+      default: null
+    },
     getdata: {
       type: Array,
       default: null

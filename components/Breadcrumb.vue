@@ -17,29 +17,13 @@
 <script>
 import { mapState } from 'vuex'
 export default {
-  components: {
-  },
   props: {
     getdata: {
       type: Array,
       default: null
     }
   },
-  data () {
-    return {
-    }
-  },
-  computed: mapState(['cdnImgUrl', 'settings', 'layout']),
-  mounted () {
-    this.getLayout()
-  },
-  methods: {
-    getLayout () {
-      // this.$store.dispatch('getLayout', {
-      //   where: this.getdata.type
-      // })
-    }
-  }
+  computed: mapState(['settings'])
 }
 </script>
 <style lang="sass">

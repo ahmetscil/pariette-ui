@@ -1,18 +1,18 @@
 <template>
   <div class="asc__su-DataBox">
-    <Carousel :admin="authUser" :getdata="desktopSliders" :where="'home'" class="d-none d-md-block" />
-    <Carousel :admin="authUser" :getdata="mobileSliders" :where="'home'" class="d-block d-md-none" />
+    <Carousel :getdata="desktopSliders" :where="'home'" class="d-none d-md-block" />
+    <Carousel :getdata="mobileSliders" :where="'home'" class="d-block d-md-none" />
     <div :class="layout.content">
       <b-row>
         <b-col v-if="layout.sidebar === 'left'" cols="12" lg="4">
-          <Sidebar :admin="authUser" :getdata="sliders" />
-          <Sidebar :admin="authUser" :getdata="sliders" />
+          <Sidebar :getdata="sliders" />
+          <Sidebar :getdata="sliders" />
         </b-col>
         <b-col cols="12" :lg="layout.sidebar === 'none' ? 12 : 8">
-          <HomeBox :admin="authUser" :getdata="canvas" />
+          <HomeBox :getdata="canvas" />
         </b-col>
         <b-col v-if="layout.sidebar === 'right'" cols="12" lg="4">
-          <Sidebar :admin="authUser" :getdata="canvas" />
+          <Sidebar :getdata="canvas" />
         </b-col>
       </b-row>
     </div>
@@ -41,7 +41,7 @@ export default {
       routeparam: null
     }
   },
-  computed: mapState(['cdnImgUrl', 'settings', 'layout', 'pariette', 'token', 'authUser']),
+  computed: mapState(['cdnImgUrl', 'settings', 'layout', 'pariette', 'token']),
   mounted () {
     this.getLayout()
     this.asyncData()

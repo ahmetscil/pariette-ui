@@ -25,6 +25,9 @@ export default {
   SET_CONSOLE (payload) {
     console.log(payload)
   },
+  PARIETTE (state, payload) {
+    state.showAdmin = payload
+  },
   PAGE_LOCATION (payload) {
     this.app.router.push({ name: 'index' })
   },
@@ -42,7 +45,7 @@ export default {
     console.log(payload)
   },
   CONTROL_USER (state) {
-    state.authUser = localStorage.getItem('user') ? localStorage.getItem('user') : null
+    state.authUser = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
   },
   thisLayout (state, payload) {
     state.layout = payload

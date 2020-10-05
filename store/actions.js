@@ -63,12 +63,30 @@ export default {
       throw error
     }
   },
+  async createData ({ state, commit }, data) {
+    try {
+      const content = await axios.post(`${state.pariette}${data.api}`, data.form, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: 'Bearer ' + state.authUser.access_token
+        }
+      })
+      commit('SET_UPDATE_OK', content.data.data.title)
+    } catch (error) {
+      console.log(error)
+      // commit('SET_ERROR', error)
+      // if (error.response && error.response.status === 401) {
+      //   throw new Error('Bad credentials')
+      // }
+      // throw error
+    }
+  },
   async updateData ({ state, commit }, data) {
     try {
       const content = await axios.put(`${state.pariette}${data.api}/${data.id}`, data.form, {
         headers: {
           Accept: 'application/json',
-          Authorization: 'Bearer ' + JSON.parse(state.authUser).access_token
+          Authorization: 'Bearer ' + state.authUser.access_token
         }
       })
       commit('SET_UPDATE_OK', content.data.data.title)

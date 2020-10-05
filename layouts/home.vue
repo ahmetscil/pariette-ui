@@ -52,5 +52,5 @@ export default {
 <style lang="sass">
   .asc__su-home__start
     min-height: 100vh
-    padding-top: 130px
+    padding-top: 150px
 </style>

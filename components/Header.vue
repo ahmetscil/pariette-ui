@@ -1,22 +1,85 @@
 <template>
-  <div :class="headerClass">
-    <b-container class="d-none d-lg-block">
-      <b-row>
-        <b-col cols="10" class="asc__su-header-top">
-          <div class="asc__su-header-logo">
-            <nuxt-link :to="{name: 'index'}">
-              <img class="asc__su-header-show-headerLight" src="../static/logo-white.svg" :alt="settings.title" :title="settings.title">
-              <img class="asc__su-header-show-headerDark" src="../static/logo-black.svg" :alt="settings.title" :title="settings.title">
-            </nuxt-link>
-          </div>
-          <div class="asc__su-header-nav">
-            <div class="asc__su-header-nav__head">
-              <i class="fas fa-envelope" /> <a :href="'mailto:' + settings.email">{{ settings.email }}</a>
-              <i class="fas fa-phone-alt" /> <a :href="'tel:' + settings.tel1">{{ settings.tel1Title }}</a> / <a :href="'tel:' + settings.tel2">{{ settings.tel2Title }}</a>
+  <div>
+    <ParietteBar v-if="authUser" />
+    <div :class="headerClass">
+      <b-container class="d-none d-lg-block">
+        <b-row>
+          <b-col cols="10" class="asc__su-header-top">
+            <div class="asc__su-header-logo">
+              <nuxt-link :to="{name: 'index'}">
+                <img class="asc__su-header-show-headerLight" src="../static/logo-white.svg" :alt="settings.title" :title="settings.title">
+                <img class="asc__su-header-show-headerDark" src="../static/logo-black.svg" :alt="settings.title" :title="settings.title">
+              </nuxt-link>
             </div>
-            <ul v-for="(n, id) in navigation" :key="id" class="asc__su-header-nav__list">
+            <div class="asc__su-header-nav">
+              <div class="asc__su-header-nav__head">
+                <i class="fas fa-envelope" /> <a :href="'mailto:' + settings.email">{{ settings.email }}</a>
+                <i class="fas fa-phone-alt" /> <a :href="'tel:' + settings.tel1">{{ settings.tel1Title }}</a> / <a :href="'tel:' + settings.tel2">{{ settings.tel2Title }}</a>
+              </div>
+              <ul v-for="(n, id) in navigation" :key="id" class="asc__su-header-nav__list">
+                <li v-for="(nav, idx) in n.navs.filter(l => l.lang == settings.lang)" :key="'nav' + idx" class="">
+                  <nuxt-link v-if="nav.route" :to="{name: nav.route, params: {url: nav.url}}">
+                    {{ nav.title.trim() }}<i v-if="nav.length >= 1" class="fas fa-chevron-down" style="margin-left: .5em" />
+                  </nuxt-link>
+                  <span v-else>
+                    {{ nav.title.trim() }}<i v-if="nav.length >= 1" class="fas fa-chevron-down" style="margin-left: .5em" />
+                  </span>
+                  <ul v-if="nav.sub.length >= 1" class="shadow-sm">
+                    <li v-for="(sub, idy) in nav.sub.filter(l => l.lang === settings.lang)" :key="'sub' + idy">
+                      <nuxt-link :to="{name: sub.route, params: {url: sub.url}}">
+                        {{ sub.title }}
+                      </nuxt-link>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </b-col>
+          <b-col cols="2" class="asc__su-header-operations">
+            <div class="asc__su-header-lang" @click="setLang('tr_TR')">
+              <img src="../static/tr.svg">
+            </div>
+            <div class="asc__su-header-lang" @click="setLang('en_EN')">
+              <img src="../static/en.svg">
+            </div>
+            <!--<b-dropdown variant="default" no-caret>
+              <template v-slot:button-content>
+                <i class="fas fa-bars" />
+              </template>
+              <b-dropdown-item v-if="!authUser" @click="loginModal(true)">
+                {{ $t('home.login') }}
+              </b-dropdown-item>
+              <b-dropdown-item v-else @click="routerPush('admin-create')">
+                {{ $t('home.create') }}
+              </b-dropdown-item>
+            </b-dropdown>-->
+          </b-col>
+        </b-row>
+      </b-container>
+      <b-container fluid class="d-block d-lg-none">
+        <div class="asc__su-header-mobile">
+          <b-row>
+            <b-col cols="10">
+              <nuxt-link :to="{name: 'index'}">
+                <img class="asc__su-header-show-headerDark" src="../static/logo-black.svg" :alt="settings.title" :title="settings.title">
+                <img class="asc__su-header-show-headerLight" src="../static/logo-white.svg" :alt="settings.title" :title="settings.title">
+              </nuxt-link>
+            </b-col>
+            <b-col cols="2">
+              <div :class="hamburgerMenu">
+                <div id="hamburger" :class="hamburger" @click="hamburgerClick()">
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </div>
+              </div>
+            </b-col>
+          </b-row>
+          <div class="asc__su-header-mobile-nav">
+            <ul v-for="(n, id) in navigation" :key="id" class="asc__su-header-mobile-nav__list">
               <li v-for="(nav, idx) in n.navs.filter(l => l.lang == settings.lang)" :key="'nav' + idx" class="">
-                <nuxt-link v-if="nav.route" :to="{name: nav.route, params: {url: nav.url}}">
+                <nuxt-link v-if="nav.route" :to="{name: nav.route, params: {url: nav.url}}" @click.native="hamburgerClick()">
                   {{ nav.title.trim() }}<i v-if="nav.length >= 1" class="fas fa-chevron-down" style="margin-left: .5em" />
                 </nuxt-link>
                 <span v-else>
@@ -24,7 +87,7 @@
                 </span>
                 <ul v-if="nav.sub.length >= 1" class="shadow-sm">
                   <li v-for="(sub, idy) in nav.sub.filter(l => l.lang === settings.lang)" :key="'sub' + idy">
-                    <nuxt-link :to="{name: sub.route, params: {url: sub.url}}">
+                    <nuxt-link :to="{name: sub.route, params: {url: sub.url}}" @click.native="hamburgerClick()">
                       {{ sub.title }}
                     </nuxt-link>
                   </li>
@@ -32,75 +95,19 @@
               </li>
             </ul>
           </div>
-        </b-col>
-        <b-col cols="2" class="asc__su-header-operations">
-          <div class="asc__su-header-lang" @click="setLang('tr_TR')">
-            <img src="../static/tr.svg">
-          </div>
-          <div class="asc__su-header-lang" @click="setLang('en_EN')">
-            <img src="../static/en.svg">
-          </div>
-          <!--<b-dropdown variant="default" no-caret>
-            <template v-slot:button-content>
-              <i class="fas fa-bars" />
-            </template>
-            <b-dropdown-item v-if="!authUser" @click="loginModal(true)">
-              {{ $t('home.login') }}
-            </b-dropdown-item>
-            <b-dropdown-item v-else @click="routerPush('admin-create')">
-              {{ $t('home.create') }}
-            </b-dropdown-item>
-          </b-dropdown>-->
-        </b-col>
-      </b-row>
-    </b-container>
-    <b-container fluid class="d-block d-lg-none">
-      <div class="asc__su-header-mobile">
-        <b-row>
-          <b-col cols="10">
-            <nuxt-link :to="{name: 'index'}">
-              <img class="asc__su-header-show-headerDark" src="../static/logo-black.svg" :alt="settings.title" :title="settings.title">
-              <img class="asc__su-header-show-headerLight" src="../static/logo-white.svg" :alt="settings.title" :title="settings.title">
-            </nuxt-link>
-          </b-col>
-          <b-col cols="2">
-            <div :class="hamburgerMenu">
-              <div id="hamburger" :class="hamburger" @click="hamburgerClick()">
-                <span />
-                <span />
-                <span />
-                <span />
-              </div>
-            </div>
-          </b-col>
-        </b-row>
-        <div class="asc__su-header-mobile-nav">
-          <ul v-for="(n, id) in navigation" :key="id" class="asc__su-header-mobile-nav__list">
-            <li v-for="(nav, idx) in n.navs.filter(l => l.lang == settings.lang)" :key="'nav' + idx" class="">
-              <nuxt-link v-if="nav.route" :to="{name: nav.route, params: {url: nav.url}}" @click.native="hamburgerClick()">
-                {{ nav.title.trim() }}<i v-if="nav.length >= 1" class="fas fa-chevron-down" style="margin-left: .5em" />
-              </nuxt-link>
-              <span v-else>
-                {{ nav.title.trim() }}<i v-if="nav.length >= 1" class="fas fa-chevron-down" style="margin-left: .5em" />
-              </span>
-              <ul v-if="nav.sub.length >= 1" class="shadow-sm">
-                <li v-for="(sub, idy) in nav.sub.filter(l => l.lang === settings.lang)" :key="'sub' + idy">
-                  <nuxt-link :to="{name: sub.route, params: {url: sub.url}}" @click.native="hamburgerClick()">
-                    {{ sub.title }}
-                  </nuxt-link>
-                </li>
-              </ul>
-            </li>
-          </ul>
         </div>
-      </div>
-    </b-container>
+      </b-container>
+    </div>
   </div>
 </template>
 <script>
 import { TweenMax } from 'gsap'
 import { mapState } from 'vuex'
+import ParietteBar from '@/components/ParietteBar'
 export default {
+  components: {
+    ParietteBar
+  },
   data () {
     return {
       hamburger: '',
@@ -174,7 +181,7 @@ export default {
     width: 100%
     height: 130px
     position: fixed
-    z-index: 9999
+    z-index: 9998
     color: #333
     padding: 0
     font-family: 'Raleway', sans-serif

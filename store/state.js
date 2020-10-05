@@ -4,6 +4,7 @@ export default () => ({
   pariette: 'http://127.0.0.1:8000/api/',
   token: '113VP3nHVC34ZrizRsF7TDmQlwJ3DwitIqLwzWhKr7m3NE8wVxGMsdC8CizAmKIq',
   authUser: null,
+  showAdmin: false,
   locales: ['tr'],
   locale: 'tr',
   start: 0,
@@ -26,6 +27,20 @@ export default () => ({
     tel1Title: '+90 212 450 10 63',
     tel2: '+905415966667',
     tel2Title: '+90 541 596 66 67'
+  },
+  tynmceOpt: {
+    directionality: 'ltr',
+    language: 'tr',
+    plugins: [
+      'image imagetools',
+      'advlist autolink lists link image charmap print preview anchor',
+      'searchreplace visualblocks code fullscreen',
+      'insertdatetime media table paste imagetools wordcount searchreplace',
+      'autolink autoresize emoticons code media table'
+    ],
+    toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify',
+    toolbar2: 'searchreplace paste pastetex | link image media | emoticons code | bullist numlist outdent indent | table tabledelete',
+    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
   },
   // new
   layout: [],

@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <ParietteBar />
     <Header />
     <div class="asc__su-fixed-right">
       <div class="asc__su-fixed-right-text">
@@ -38,13 +39,15 @@ import Footer from '@/components/Footer'
 import Login from '@/components/Login'
 import Modal from '@/components/Modal'
 import Popup from '@/components/Popup'
+import ParietteBar from '@/components/ParietteBar'
 export default {
   components: {
     Header,
     Footer,
     Login,
     Modal,
-    Popup
+    Popup,
+    ParietteBar
   },
   computed: mapState(['modalShow', 'popupShow'])
 }

@@ -25,6 +25,10 @@ export default {
     const rowsnavigationFooter = await axios.get(`${state.pariette}${state.token}/navigation?slug=footer-navigation`)
     this.commit('navigationFooterSet', rowsnavigationFooter.data)
   },
+  async getGallery ({ state }, data) {
+    const galleryRows = await axios.get(`${state.pariette}${state.token}/gallery${data.canvas ? '?canvas=' + data.canvas : '?'}`)
+    this.commit('gallerySet', galleryRows.data)
+  },
   async login ({ state, commit }, data) {
     try {
       const user = await axios.post(`${state.pariette}auth/login`, data)
@@ -63,6 +67,28 @@ export default {
       throw error
     }
   },
+  async autoSaveData ({ state, commit }, data) {
+    try {
+      const content = await axios.post(`${state.pariette}${data.api}`, data.form, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: 'Bearer ' + state.authUser.access_token
+        }
+      })
+      const savedCanvas = {
+        canvas: content,
+        saved: true
+      }
+      commit('SET_AUTOSAVE', savedCanvas)
+    } catch (error) {
+      console.log(error)
+      // commit('SET_ERROR', error)
+      // if (error.response && error.response.status === 401) {
+      //   throw new Error('Bad credentials')
+      // }
+      // throw error
+    }
+  },
   async createData ({ state, commit }, data) {
     try {
       const content = await axios.post(`${state.pariette}${data.api}`, data.form, {
@@ -73,8 +99,7 @@ export default {
       })
       commit('SET_UPDATE_OK', content.data.data.title)
     } catch (error) {
-      console.log(error)
-      // commit('SET_ERROR', error)
+      commit('SET_ERROR', error)
       // if (error.response && error.response.status === 401) {
       //   throw new Error('Bad credentials')
       // }

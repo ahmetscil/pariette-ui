@@ -40,6 +40,10 @@ export default {
     this.app.router.push({ name: 'index' })
     console.log(payload + ' güncellendi')
   },
+  SET_AUTOSAVE (state, payload) {
+    state.isSaved = payload.saved
+    console.log('autosave çalıştırıldı')
+  },
   SET_ERROR (state, payload) {
     this.app.router.push({ name: 'index' })
     console.log(payload)
@@ -64,6 +68,9 @@ export default {
   },
   navigationFooterSet (state, payload) {
     state.navigationFooter = payload
+  },
+  gallerySet (state, payload) {
+    state.galleryRows = payload
   },
   settingsSet (state, payload) {
     state.settings = payload

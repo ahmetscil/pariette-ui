@@ -22,7 +22,6 @@ module.exports = {
   ],
   plugins: [
     { src: './plugins/editor.js', mode: 'client' },
-    { src: './plugins/dropzone.js' },
     { src: './plugins/carousel.js', mode: 'client' },
     { src: './plugins/lightbox.js', mode: 'client' },
     { src: './plugins/social-sharing.js' },
@@ -31,7 +30,8 @@ module.exports = {
     { src: './plugins/google.js', mode: 'client' }
   ],
   buildModules: [
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
+    'dropzone-nuxt'
   ],
   modules: [
     '@nuxtjs/axios',

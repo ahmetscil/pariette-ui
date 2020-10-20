@@ -21,6 +21,8 @@
     "name": "İsim",
     "phone": "Telefon",
     "kvkk": "Kişisel verilerimin kaydedilmesini onaylıyorum.",
-    "submitreq": "Gönder"
+    "submitreq": "Gönder",
+    "titleHere": "etkileyici bir başlık atın...",
+    "contentHere": "Etkileyici bir içeriğe başlayın..."
   }
 }

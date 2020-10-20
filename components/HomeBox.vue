@@ -55,6 +55,4 @@ export default {
 }
 </script>
 <style lang="sass">
-  .aasdf
-    margin-bottom: 200px
 </style>

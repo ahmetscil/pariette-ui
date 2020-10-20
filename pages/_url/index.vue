@@ -1,9 +1,6 @@
 <template>
   <div class="asc__su-DataBox">
-    <template v-if="showAdmin">
-      <iLovePariette />
-    </template>
-    <template v-else>
+    <template v-if="!showAdmin">
       <Carousel
         v-if="layout.headerW != 'd-none'"
         :getdata="desktopSliders"
@@ -21,7 +18,6 @@
         class="d-block d-md-none"
       />
       <div :class="layout.content">
-        {{ layout }}
         <b-row>
           <b-col v-if="layout.sidebar === 'left'" cols="12" lg="4">
             <Sidebar :getdata="canvas" />
@@ -35,13 +31,16 @@
         </b-row>
       </div>
     </template>
+    <template v-else>
+      <iLovePariette />
+    </template>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import axios from '~/plugins/axios'
-import Carousel from '@/components/Carousel'
 import ContentBox from '@/components/ContentBox'
+import Carousel from '@/components/Carousel'
 import Sidebar from '@/components/Sidebar'
 import iLovePariette from '@/components/iLovePariette'
 export default {

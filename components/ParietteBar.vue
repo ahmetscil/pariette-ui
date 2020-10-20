@@ -1,31 +1,37 @@
 <template>
-  <b-container class="asc__su-parietteAdmin">
-    <b-row>
-      <b-col>
-        <ul class="asc__su-parietteAdmin-nav">
-          <li v-for="(nav, idx) in navigation" :key="'nav' + idx" class="">
-            {{ nav.title.trim() }} <i v-if="nav.sub.length >= 1" class="fas fa-chevron-down" style="margin-left: .5em" />
-            <ul v-if="nav.sub.length >= 1" class="shadow-sm">
-              <li v-for="(sub, idy) in nav.sub" :key="'sub' + idy">
-                <nuxt-link :to="{name: 'url', params: {url: 'canvas'}, query: { 'operation': sub.operation }}">
-                  {{ sub.title }}
-                </nuxt-link>
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <div class="asc__su-parietteAdmin-hamburger">
-          <i class="fas fa-chevron-circle-up" />
-        </div>
-      </b-col>
-    </b-row>
-  </b-container>
+  <div v-if="authUser">
+    <div class="asc__su-parietteAdmin-open" @click="showParietteBar">
+      <i class="fas fa-bars" />
+    </div>
+    <b-sidebar title="iLovePariette" aria-labelledby="sidebar-no-header-title" right shadow :visible="showPariette">
+      <b-row>
+        <b-col>
+          <ul class="asc__su-parietteAdmin-nav">
+            <li v-for="(nav, idx) in navigation" :key="'nav' + idx" class="">
+              {{ nav.title.trim() }} <i v-if="nav.sub.length >= 1" class="fas fa-chevron-down" style="margin-left: .5em" />
+              <ul v-if="nav.sub.length >= 1" class="shadow-sm">
+                <li v-for="(sub, idy) in nav.sub" :key="'sub' + idy">
+                  <nuxt-link :to="{name: 'url', params: {url: 'canvas'}, query: { 'operation': sub.operation }}">
+                    {{ sub.title }}
+                  </nuxt-link>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <div class="asc__su-parietteAdmin-hamburger">
+            <i class="fas fa-chevron-circle-up" />
+          </div>
+        </b-col>
+      </b-row>
+    </b-sidebar>
+  </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 export default {
   data () {
     return {
+      showPariette: true,
       navigation: [
         {
           title: 'Pariette',
@@ -67,10 +73,20 @@ export default {
   computed: mapState(['settings', 'authUser']),
   mounted () {
     this.$store.commit('CONTROL_USER')
+  },
+  methods: {
+    showParietteBar () {
+      this.showPariette = true
+    }
   }
 }
 </script>
 <style lang="sass">
+  .asc__su-parietteAdmin-open
+    position: fixed
+    top: 200px
+    right: 30px
+    z-index: 99
   .asc__su-parietteAdmin
     top: 0px
     right: 0

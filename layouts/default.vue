@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <ParietteBar />
     <Header />
     <div class="asc__su-fixed-right">
       <div class="asc__su-fixed-right-text">
@@ -34,17 +35,20 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Login from '@/components/Login'
 import Modal from '@/components/Modal'
+import ParietteBar from '@/components/ParietteBar'
 export default {
   components: {
     Header,
     Footer,
     Login,
-    Modal
+    Modal,
+    ParietteBar
   },
   computed: mapState(['modalShow'])
 }
 </script>
 <style lang="sass">
+  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700;800&display=swap')
   *
     outline: none
   .form-control
@@ -58,7 +62,7 @@ export default {
     & label
       color: red
     & input, select, textarea
-      border: 1px red solid !important
+      border-bottom: 1px red solid !important
       background-color: red !important
       color: #fff !important
   a
@@ -70,7 +74,7 @@ export default {
       color: #ff0000 !important
     .form-control,
     .vs__dropdown-toggle
-      border: 1px #ff0000 solid !important
+      border-bottom: 1px #ff0000 solid !important
       background: #ff000005 !important
   .activeNavigationMainMenu
     color: #E86950 !important

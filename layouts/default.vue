@@ -48,12 +48,12 @@ export default {
 }
 </script>
 <style lang="sass">
-  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700;800&display=swap')
   *
-    outline: none
+    outline: none !important
   .form-control
     &:focus
-      box-shadow: 0 0 0 0.2rem rgba(232, 232, 232, 0.25)
+      // box-shadow: 0 0 0 0.2rem rgba(232, 232, 232, 0.25)
+      box-shadow: none !important
   body
     font-family: 'Open Sans', sans-serif;
     background: #fbf9f6

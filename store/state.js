@@ -10,6 +10,9 @@ export default () => ({
   locale: 'tr',
   start: 0,
   end: 10,
+  errorMessage: null,
+  errorState: false,
+  validationErrors: [],
   settings: {
     title: 'istasyon yurtları',
     url: 'https://www.istasyonyurtlari.com.tr/',
@@ -29,25 +32,10 @@ export default () => ({
     tel2: '+905415966667',
     tel2Title: '+90 541 596 66 67'
   },
-  tynmceOpt: {
-    directionality: 'ltr',
-    language: 'tr',
-    plugins: [
-      'image imagetools',
-      'advlist autolink lists link image charmap print preview anchor',
-      'searchreplace visualblocks code fullscreen',
-      'insertdatetime media table paste imagetools wordcount searchreplace',
-      'autolink autoresize emoticons code media table'
-    ],
-    toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify',
-    toolbar2: 'searchreplace paste pastetex | link image media | emoticons code | bullist numlist outdent indent | table tabledelete',
-    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-  },
   // new
   layout: [],
   keyData: [],
   // new
-  isSaved: true,
   navigation: [],
   navigationFooter: [],
   galleryRows: [],
@@ -60,6 +48,7 @@ export default () => ({
   bannerallnews: [],
   blogs: [],
   page: [],
+  cats: [],
   modalShow: false,
   popupShow: true
 })

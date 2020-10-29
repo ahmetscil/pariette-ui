@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 import i18n from '../plugins/i18n'
 export default {
   increment (state) {
@@ -9,7 +10,10 @@ export default {
   SEND_SUCCESS (state, payload) {
     this.$toast.success(payload)
   },
-  SEND_ERROR (state, payload) {
+  SEND_PROGRESSING (payload) {
+    this.$toast.info(payload)
+  },
+  SEND_ERROR (payload) {
     this.$toast.error(payload)
   },
   LOCATION_HREF (payload) {
@@ -31,22 +35,59 @@ export default {
   PAGE_LOCATION (payload) {
     this.app.router.push({ name: 'index' })
   },
-  SET_USER (state, user) {
+  SET_USER (user) {
     localStorage.setItem('user', JSON.stringify(user))
     this.commit('CONTROL_USER')
     this.commit('modal', false)
   },
-  SET_UPDATE_OK (state, payload) {
-    this.app.router.push({ name: 'index' })
-    console.log(payload + ' güncellendi')
+  SET_COMPLETE (payload) {
+    this.$toast.success('pariette.createOk')
+    this.commit('DELETE_ERROR_MESSAGES')
   },
-  SET_AUTOSAVE (state, payload) {
-    state.isSaved = payload.saved
-    console.log('autosave çalıştırıldı')
-  },
-  SET_ERROR (state, payload) {
+  SET_UPDATE_OK (payload) {
     this.app.router.push({ name: 'index' })
     console.log(payload)
+  },
+  SET_ERROR (state, payload) {
+    // this.app.router.push({ name: 'index' })
+    const statusText = '<b>' + payload.status + '</b> ' + payload.statusText
+    state.errorMessage = statusText
+    state.errorState = true
+    this.$toast.error(state.errorMessage)
+    switch (payload.status) {
+      case 200:
+        console.log(payload)
+        break
+      case 401:
+        console.log(payload)
+        break
+      case 403:
+        console.log(payload)
+        break
+      case 404:
+        console.log(payload)
+        break
+      case 422:
+        // eslint-disable-next-line no-case-declarations
+        let errmsg = ''
+        Object.keys(payload.data.errors).forEach(function (key) {
+          errmsg += payload.data.errors[key]
+        })
+        state.validationErrors = errmsg
+        this.$toast.error(state.validationErrors)
+        break
+      case 500:
+        console.log(payload)
+        break
+      default:
+        console.log(payload)
+        break
+    }
+  },
+  DELETE_ERROR_MESSAGES (state) {
+    state.validationErrors = null
+    state.errorMessage = null
+    state.errorState = false
   },
   CONTROL_USER (state) {
     state.authUser = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
@@ -59,6 +100,9 @@ export default {
   },
   pageSet (state, payload) {
     state.page = payload
+  },
+  catsSet (state, payload) {
+    state.cats = payload
   },
   blogsSet (state, payload) {
     state.blogs = payload

@@ -21,8 +21,33 @@
     "name": "İsim",
     "phone": "Telefon",
     "kvkk": "Kişisel verilerimin kaydedilmesini onaylıyorum.",
-    "submitreq": "Gönder",
+    "submitreq": "Gönder"
+  },
+  "pariette": {
+    "contentHere": "Etkileyici bir içeriğe başlayın...",
     "titleHere": "etkileyici bir başlık atın...",
-    "contentHere": "Etkileyici bir içeriğe başlayın..."
+    "slug": "İçerik Adresi",
+    "slugInfo": "2-3 kelimeden uzun olması önerilmemektedir.",
+    "selectCats": "Kategori Seçin",
+    "selectCat": "Kategoriler",
+    "setTags": "Etiket Tanımlayın",
+    "contentLang": "İçerik Dili",
+    "contentOptions": "İçerik Özellikleri",
+    "formhot": "Güncel",
+    "formspot": "Spot",
+    "formslider": "Sliderda Göster",
+    "formcomment": "Yoruma izin ver",
+    "formapi": "API",
+    "select": "Seç",
+    "addGallery": "Galeriye Ekle",
+    "setCover": "Kapak Yap",
+    "gallery": "Galeri",
+    "removeGallery": "Sil",
+    "btncancel": "Vazgeç",
+    "btnpublish": "Yayınla",
+    "btnsave": "Kaydet",
+    "upload": "Yükle",
+    "validationError": "Lütfen tüm zorunlu alanları doldurun.",
+    "progressing": "Lütfen bekleyin..."
   }
 }

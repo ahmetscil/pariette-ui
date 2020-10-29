@@ -30,6 +30,9 @@
     <Popup v-if="popupShow">
       <img class="asc__su-popup-fullbanner" src="~/static/esenyurt.png">
     </Popup>
+    <div v-if="errorState">
+      {{ errorMessage }}
+    </div>
   </div>
 </template>
 <script>
@@ -49,7 +52,7 @@ export default {
     Popup,
     ParietteBar
   },
-  computed: mapState(['modalShow', 'popupShow'])
+  computed: mapState(['modalShow', 'popupShow', 'errorState', 'errorMessage'])
 }
 </script>
 <style lang="sass">

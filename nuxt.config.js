@@ -24,6 +24,7 @@ module.exports = {
     { src: './plugins/editor.js', mode: 'client' },
     { src: './plugins/carousel.js', mode: 'client' },
     { src: './plugins/lightbox.js', mode: 'client' },
+    { src: './plugins/multiselect.js' },
     { src: './plugins/social-sharing.js' },
     { src: './plugins/i18n.js' },
     { src: './plugins/vuelidate.js' },
@@ -48,7 +49,12 @@ module.exports = {
     }]
   ],
   toast: {
-    position: 'top-right',
+    theme: 'bubble',
+    position: 'top-center',
+    duration: 5000,
+    fullWidth: true,
+    iconPack: 'fontawesome',
+    containerClass: 'iLovePariette-toast',
     register: [
       {
         name: 'my-error',

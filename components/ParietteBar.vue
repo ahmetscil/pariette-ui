@@ -1,25 +1,41 @@
 <template>
   <div v-if="authUser">
-    <div class="asc__su-parietteAdmin-open" @click="showParietteBar">
-      <i class="fas fa-bars" />
+    <div v-b-toggle.parietteSideBar class="asc__su-parietteAdmin-open">
+      <i
+        v-b-tooltip.hover.left
+        class="fas fa-bars"
+        :title="$t('pariette.showPariette')"
+      />
     </div>
-    <b-sidebar title="iLovePariette" aria-labelledby="sidebar-no-header-title" right shadow :visible="showPariette">
-      <b-row>
+    <b-sidebar
+      id="parietteSideBar"
+      title="iLovePariette"
+      aria-labelledby="sidebar-no-header-title"
+      right
+      shadow
+      :visible="showPariette"
+    >
+      <b-row class="asc__su-parietteAdmin">
         <b-col>
-          <ul class="asc__su-parietteAdmin-nav">
-            <li v-for="(nav, idx) in navigation" :key="'nav' + idx" class="">
-              {{ nav.title.trim() }} <i v-if="nav.sub.length >= 1" class="fas fa-chevron-down" style="margin-left: .5em" />
-              <ul v-if="nav.sub.length >= 1" class="shadow-sm">
-                <li v-for="(sub, idy) in nav.sub" :key="'sub' + idy">
-                  <nuxt-link :to="{name: 'url', params: {url: 'canvas'}, query: { 'operation': sub.operation }}">
-                    {{ sub.title }}
-                  </nuxt-link>
-                </li>
-              </ul>
-            </li>
-          </ul>
-          <div class="asc__su-parietteAdmin-hamburger">
-            <i class="fas fa-chevron-circle-up" />
+          <div class="accordion" role="tablist">
+            <b-card v-for="(nav, idx) in navigation" :key="'navc' + idx" no-body class="mb-1">
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-button v-b-toggle="'accordion-' + idx" block class="asc__su-parietteAdmin-nav-title">
+                  {{ nav.title.trim() }}
+                </b-button>
+              </b-card-header>
+              <b-collapse :id="'accordion-' + idx" accordion="my-accordion" role="tabpanel">
+                <b-card-body>
+                  <ul v-if="nav.sub.length >= 1" class="asc__su-parietteAdmin-nav">
+                    <li v-for="(sub, idy) in nav.sub" :key="'sub' + idy">
+                      <nuxt-link :to="{name: 'url', params: {url: 'canvas'}, query: { 'operation': sub.operation, 'type': sub.type }}">
+                        {{ sub.title }}
+                      </nuxt-link>
+                    </li>
+                  </ul>
+                </b-card-body>
+              </b-collapse>
+            </b-card>
           </div>
         </b-col>
       </b-row>
@@ -31,23 +47,15 @@ import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      showPariette: true,
       navigation: [
-        {
-          title: 'Pariette',
-          sub: []
-        },
         {
           title: 'Content',
           sub: [
-            {
-              title: 'Dinamik',
-              operation: 'content'
-            },
-            { title: 'Statik', operation: 'content' },
-            { title: 'Banner', operation: 'content' },
-            { title: 'Mesaj', operation: 'content' },
-            { title: 'Navigasyon', operation: 'content' }
+            { title: 'Dinamik', operation: 'content', type: 'dynamic' },
+            { title: 'Statik', operation: 'content', type: 'static' },
+            { title: 'Banner', operation: 'content', type: 'banner' },
+            { title: 'Mesaj', operation: 'content', type: 'message' },
+            { title: 'Navigasyon', operation: 'content', type: 'navigation' }
           ]
         },
         {
@@ -70,36 +78,33 @@ export default {
       ]
     }
   },
-  computed: mapState(['settings', 'authUser']),
+  computed: mapState(['settings', 'authUser', 'showPariette']),
   mounted () {
     this.$store.commit('CONTROL_USER')
-  },
-  methods: {
-    showParietteBar () {
-      this.showPariette = true
-    }
   }
 }
 </script>
 <style lang="sass">
   .asc__su-parietteAdmin-open
     position: fixed
-    top: 200px
-    right: 30px
-    z-index: 99
-  .asc__su-parietteAdmin
     top: 0px
-    right: 0
-    left: 0
-    margin: auto
-    position: fixed
-    z-index: 9999
+    right: 0px
+    z-index: 100
+    width: 30px
+    height: 30px
+    line-height: 30px
+    border-bottom-left-radius: 3px
+    background: #000
     color: #fff
-    padding: 0
+    text-align: center
+  .asc__su-parietteAdmin
     font-family: 'Raleway', sans-serif
     will-change: transform
     transition: transform 250ms linear
-    background: #000
+    .asc__su-parietteAdmin-nav-title
+      border: none
+      background: #000
+      color: #fff
     .asc__su-parietteAdmin-nav
       padding: 0
       margin-bottom: 0px
@@ -107,32 +112,20 @@ export default {
       font-size: 16px
       letter-spacing: -0.1px
       line-height: 30px
-      float: left
       & li
-        display: inline-block
-        color: #fff
+        display: block
         position: relative
         letter-spacing: -0.3px
         padding: 5px 15px
         .nuxt-link-exact-active
           border-bottom: 3px #000 solid
-        & span
-          cursor: pointer
-          padding: 15px 0
-          border-bottom: 3px transparent solid
-          margin-right: 20px
-          font-weight: 500
-          color: #fff
-          display: block
-          & i
-            font-size: 10px
         & a
           padding: 15px 0
           border-bottom: 3px transparent solid
           margin-right: 20px
           font-weight: 500
-          color: #fff
           display: block
+          color: #000
           & i
             font-size: 10px
         &:first-child
@@ -146,7 +139,6 @@ export default {
         & ul
           list-style: none
           position: absolute
-          background: #000
           z-index: 999
           width: 200px
           display: none
@@ -197,9 +189,7 @@ export default {
             display: block
             & li
               & a
-                color: #fff !important
                 &:hover
-                  color: #fff !important
     .asc__su-parietteAdmin-hamburger
       line-height: 40px
       width: 40px

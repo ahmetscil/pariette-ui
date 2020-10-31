@@ -12,7 +12,6 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
 export default {
   components: {
   },
@@ -21,8 +20,7 @@ export default {
       type: Array,
       default: null
     }
-  },
-  computed: mapState(['cdnImgUrl'])
+  }
 }
 </script>
 <style lang="sass">

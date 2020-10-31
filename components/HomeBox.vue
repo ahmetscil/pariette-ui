@@ -26,7 +26,7 @@ export default {
     return {
     }
   },
-  computed: mapState(['cdnImgUrl', 'settings', 'layout']),
+  computed: mapState(['settings', 'layout']),
   head () {
     return {
       title: this.settings.title,

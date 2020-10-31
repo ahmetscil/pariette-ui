@@ -17,17 +17,13 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
 export default {
-  components: {
-  },
   props: {
     getdata: {
       type: Array,
       default: null
     }
-  },
-  computed: mapState(['cdnImgUrl'])
+  }
 }
 </script>
 <style lang="sass">

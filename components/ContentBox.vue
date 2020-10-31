@@ -33,7 +33,7 @@ export default {
     return {
     }
   },
-  computed: mapState(['cdnImgUrl', 'settings'])
+  computed: mapState(['settings'])
 }
 </script>
 <style lang="sass">

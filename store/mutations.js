@@ -1,22 +1,19 @@
 /* eslint-disable no-unreachable */
 import i18n from '../plugins/i18n'
 export default {
-  increment (state) {
-    state.counter++
-  },
   loadLimit (state, payload) {
     state.end = payload
   },
   SEND_SUCCESS (state, payload) {
     this.$toast.success(payload)
   },
-  SEND_PROGRESSING (payload) {
+  SEND_PROGRESSING (state, payload) {
     this.$toast.info(payload)
   },
-  SEND_ERROR (payload) {
+  SEND_ERROR (state, payload) {
     this.$toast.error(payload)
   },
-  LOCATION_HREF (payload) {
+  LOCATION_HREF (state, payload) {
     this.$router.push({ name: payload })
   },
   SET_LANG (state, payload) {
@@ -26,13 +23,13 @@ export default {
       i18n.locale = payload
     }
   },
-  SET_CONSOLE (payload) {
+  SET_CONSOLE (state, payload) {
     console.log(payload)
   },
   PARIETTE (state, payload) {
     state.showAdmin = payload
   },
-  PAGE_LOCATION (payload) {
+  PAGE_LOCATION (state, payload) {
     this.app.router.push({ name: 'index' })
   },
   SET_USER (user) {
@@ -40,12 +37,13 @@ export default {
     this.commit('CONTROL_USER')
     this.commit('modal', false)
   },
-  SET_COMPLETE (payload) {
+  SET_COMPLETE (state, payload) {
     this.$toast.success('pariette.createOk')
+    this.app.router.push({ name: 'url', params: { url: payload.data.slug } })
     this.commit('DELETE_ERROR_MESSAGES')
   },
-  SET_UPDATE_OK (payload) {
-    this.app.router.push({ name: 'index' })
+  SET_UPDATE_OK (state, payload) {
+    // this.app.router.push({ name: 'index' })
     console.log(payload)
   },
   SET_ERROR (state, payload) {

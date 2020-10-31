@@ -16,7 +16,12 @@
       :visible="showPariette"
     >
       <b-row class="asc__su-parietteAdmin">
-        <b-col>
+        <b-col cols="12">
+          <b-button class="asc__su-parietteAdmin-nav-title" @click="updateThis()">
+            UPDATE
+          </b-button>
+        </b-col>
+        <b-col cols="12">
           <div class="accordion" role="tablist">
             <b-card v-for="(nav, idx) in navigation" :key="'navc' + idx" no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
@@ -81,6 +86,12 @@ export default {
   computed: mapState(['settings', 'authUser', 'showPariette']),
   mounted () {
     this.$store.commit('CONTROL_USER')
+  },
+  methods: {
+    updateThis () {
+      this.$store.commit('PARIETTE', true)
+      this.$router.push({ name: 'url', params: { url: 'canvas' }, query: { content: this.$route.params.url, operation: 'update' } })
+    }
   }
 }
 </script>

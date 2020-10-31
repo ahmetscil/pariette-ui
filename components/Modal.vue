@@ -9,9 +9,7 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
 export default {
-  computed: mapState(['cdnImgUrl']),
   methods: {
     closeModal () {
       this.$store.commit('modal', false)

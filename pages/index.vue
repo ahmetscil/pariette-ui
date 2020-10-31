@@ -41,7 +41,7 @@ export default {
       routeparam: null
     }
   },
-  computed: mapState(['cdnImgUrl', 'settings', 'layout', 'pariette', 'token']),
+  computed: mapState(['settings', 'layout', 'pariette', 'token']),
   mounted () {
     this.getLayout()
     this.asyncData()

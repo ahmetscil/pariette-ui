@@ -24,6 +24,7 @@
     "submitreq": "Gönder"
   },
   "pariette": {
+    "createOk": "İçerik Oluşturuldu",
     "contentHere": "Etkileyici bir içeriğe başlayın...",
     "titleHere": "etkileyici bir başlık atın...",
     "slug": "İçerik Adresi",
@@ -40,14 +41,20 @@
     "formapi": "API",
     "select": "Seç",
     "addGallery": "Galeriye Ekle",
+    "addCarousel": "Carousele Ekle",
     "setCover": "Kapak Yap",
     "gallery": "Galeri",
+    "carousel": "Carousel",
     "removeGallery": "Sil",
     "btncancel": "Vazgeç",
     "btnpublish": "Yayınla",
+    "btnchange": "Değiştir",
+    "btnupdate": "Güncelle",
     "btnsave": "Kaydet",
     "upload": "Yükle",
     "validationError": "Lütfen tüm zorunlu alanları doldurun.",
-    "progressing": "Lütfen bekleyin..."
+    "progressing": "Lütfen bekleyin...",
+    "gallTitle": "Görsel İsmi*",
+    "gallFilter": "Galeri Filtresi"
   }
 }

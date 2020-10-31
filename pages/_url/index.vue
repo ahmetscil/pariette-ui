@@ -63,20 +63,20 @@ export default {
       pageTitle: ''
     }
   },
-  computed: mapState(['cdnImgUrl', 'settings', 'layout', 'pariette', 'token', 'showAdmin']),
+  computed: mapState(['layout', 'pariette', 'token', 'showAdmin']),
   mounted () {
     if (this.$route.params.url === 'canvas') {
       this.$store.commit('PARIETTE', true)
     } else {
       this.$store.commit('PARIETTE', false)
-      this.asyncData()
+      this.asyncData(1)
     }
   },
   methods: {
-    async asyncData () {
+    async asyncData (status) {
       const carouselDesktopData = await axios.get(`${this.pariette}${this.token}/carousel?display=web&slug=${this.$route.params.url}`)
       const carouselMobileData = await axios.get(`${this.pariette}${this.token}/carousel?display=mobile&slug=${this.$route.params.url}`)
-      const canvasData = await axios.get(`${this.pariette}${this.token}/canvas?url=${this.$route.params.url}`)
+      const canvasData = await axios.get(`${this.pariette}${this.token}/canvas?url=${this.$route.params.url}&status=${status}`)
       if (canvasData.data.data.length >= 1) {
         this.canvas = canvasData.data.data
       } else {

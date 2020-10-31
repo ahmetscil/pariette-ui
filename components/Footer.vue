@@ -45,7 +45,7 @@
 <script>
 import { mapState } from 'vuex'
 export default {
-  computed: mapState(['settings', 'cdnImgUrl', 'navigationFooter']),
+  computed: mapState(['settings', 'navigationFooter']),
   mounted () {
     this.$store.dispatch('getFooter')
   },

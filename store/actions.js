@@ -144,7 +144,8 @@ export default {
           Authorization: 'Bearer ' + state.authUser.access_token
         }
       })
-      commit('SET_UPDATE_OK', content.data.data.title)
+      // commit('SET_UPDATE_OK', content.data.data.title)
+      commit('SET_UPDATE_OK', content.data)
     } catch (error) {
       commit('SET_ERROR', error)
     }

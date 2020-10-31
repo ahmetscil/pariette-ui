@@ -39,7 +39,7 @@ export default {
       routeparam: null
     }
   },
-  computed: mapState(['cdnImgUrl', 'settings', 'layout', 'pariette', 'token', 'showAdmin']),
+  computed: mapState(['layout', 'pariette', 'token', 'showAdmin']),
   mounted () {
     this.getLayout()
     this.asyncData()

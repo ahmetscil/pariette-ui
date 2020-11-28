@@ -54,7 +54,10 @@
     "upload": "Yükle",
     "validationError": "Lütfen tüm zorunlu alanları doldurun.",
     "progressing": "Lütfen bekleyin...",
-    "gallTitle": "Görsel İsmi*",
-    "gallFilter": "Galeri Filtresi"
+    "removeCarousel": "removeCarousel",
+    "showPariette": "",
+    "gallTitle": "İsim",
+    "gallFilter": "Filtre"
+
   }
 }

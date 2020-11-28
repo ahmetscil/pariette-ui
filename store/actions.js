@@ -68,9 +68,10 @@ export default {
     try {
       const user = await axios.post(`${state.pariette}auth/login`, data)
       commit('SET_USER', user.data)
+      console.log(user)
       commit('LOCATION_HREF', 'admin')
     } catch (error) {
-      alert(error)
+      console.log(error)
       if (error.response && error.response.status === 401) {
         throw new Error('Bad credentials')
       }
@@ -84,7 +85,8 @@ export default {
     document.getElementById('loginLoader').style.display = 'block'
     try {
       const user = await axios.post(`${state.pariette}auth/emaillist`, data)
-      commit('SET_USER', user.data)
+      // commit('SET_USER', user.data)
+      console.log(user.data)
       commit('SEND_SUCCESS', this.app.i18n.t('message.success'))
       commit('PAGE_LOCATION', 'index')
       document.getElementById('loginButton').disabled = false

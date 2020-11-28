@@ -33,6 +33,7 @@ export default {
     this.app.router.push({ name: 'index' })
   },
   SET_USER (user) {
+    console.log(user)
     localStorage.setItem('user', JSON.stringify(user))
     this.commit('CONTROL_USER')
     this.commit('modal', false)
@@ -88,7 +89,12 @@ export default {
     state.errorState = false
   },
   CONTROL_USER (state) {
-    state.authUser = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
+    const luser = localStorage.getItem('user')
+    if (luser) {
+      state.authUser = luser
+    } else {
+      state.authUser = null
+    }
   },
   thisLayout (state, payload) {
     state.layout = payload

@@ -7,7 +7,6 @@
           :placeholder="$t('pariette.titleHere')"
           type="text"
           autocomplete="off"
-          autofocus="true"
           @keyup="disabledInput === false ? url_slug(form.title) : ''"
         />
       </b-form-group>
@@ -29,7 +28,6 @@
         />
       </div>
     </div>
-
     <div :class="layout.content">
       <b-row class="iLovePariette-panel-nobg">
         <b-col>
@@ -118,7 +116,6 @@
             </b-tab>
             <b-tab :title="$t('pariette.gallery')">
               <b-row class="iLovePariette-gallery-operation">
-                {{ selectedGallery }}
                 <b-col v-for="(img,i) in selectedGallery" :id="'cover'+i" :key="i" cols="3" class="iLovePariette-gallery-operation-list">
                   <figure>
                     <img :title="img.title" :src="cdnImgUrl + img.name">
@@ -177,7 +174,7 @@
         <b-col cols="12">
           <b-form-group :class="{ 'iLovePariette-formgroup--error': $v.form.keys.$error }">
             <b-form-tags
-              v-model.trim="form.keys"
+              v-model="form.keys"
               v-b-tooltip.hover.left
               separator=" ,;"
               remove-on-delete
@@ -187,6 +184,7 @@
             />
           </b-form-group>
         </b-col>
+
         <b-col cols="2">
           <b-form-group :class="{ 'iLovePariette-formgroup--error': $v.form.lang.$error }" class="123">
             <b-dropdown v-model.trim="$v.form.lang.$model" variant="light" no-outer-focus block>
@@ -194,8 +192,8 @@
                 {{ selectedLang }}
               </template>
               <b-dropdown-item-button
-                v-for="option in langOpt"
-                :key="option"
+                v-for="(option, o) in langOpt"
+                :key="'option' + o"
                 @click="langSelected(option)"
               >
                 {{ option.text }}
@@ -230,20 +228,25 @@
         </b-col>
       </b-row>-->
       <b-row class="iLovePariette-panel">
-        <b-col cols="12" class="iLovePariette-panel-buttons">
+        <b-col v-if="operation === 'update'" cols="12" class="iLovePariette-panel-buttons">
           <nuxt-link :to="{name: 'index'}" class="iLovePariette-panel-buttons-cancel">
             <i class="fas fa-times" /> {{ $t('pariette.btncancel') }}
           </nuxt-link>
-          <b-button v-if="operation" type="button" class="iLovePariette-panel-buttons-publish" @click="updateForm(1, contentId)">
+          <b-button type="button" class="iLovePariette-panel-buttons-publish" @click="updateForm(1, contentId)">
             <i class="fas fa-check" /> {{ $t('pariette.btnupdate') }}
           </b-button>
-          <b-button v-else type="button" class="iLovePariette-panel-buttons-publish" @click="submitForm(1)">
-            <i class="fas fa-check" /> {{ $t('pariette.btnpublish') }}
-          </b-button>
-          <b-button v-if="operation" type="button" size="sm" class="iLovePariette-panel-buttons-save" @click="updateForm(2, contentId)">
+          <b-button type="button" size="sm" class="iLovePariette-panel-buttons-save" @click="updateForm(2, contentId)">
             <i class="fas fa-save" /> {{ $t('pariette.btnchange') }}
           </b-button>
-          <b-button v-else type="button" size="sm" class="iLovePariette-panel-buttons-save" @click="submitForm(2)">
+        </b-col>
+        <b-col v-else cols="12" class="iLovePariette-panel-buttons">
+          <nuxt-link :to="{name: 'index'}" class="iLovePariette-panel-buttons-cancel">
+            <i class="fas fa-times" /> {{ $t('pariette.btncancel') }}
+          </nuxt-link>
+          <b-button type="button" class="iLovePariette-panel-buttons-publish" @click="submitForm(1)">
+            <i class="fas fa-check" /> {{ $t('pariette.btnpublish') }}
+          </b-button>
+          <b-button type="button" size="sm" class="iLovePariette-panel-buttons-save" @click="submitForm(2)">
             <i class="fas fa-save" /> {{ $t('pariette.btnsave') }}
           </b-button>
         </b-col>
@@ -267,6 +270,7 @@ export default {
       selectedGallery: [],
       selectedGalleryFilter: [],
       selectedCarousel: [],
+      explformkeys: [],
       isUpload: false,
       addGall: true,
       isSelect: true,
@@ -293,6 +297,182 @@ export default {
         paramName: 'uploadFile'
       },
       tynmceOpt: {
+        valid_elements: '' +
+        'i[accesskey|charset|class|coords|dir<ltr?rtl|href|hreflang|id|lang|name' +
+        '|onblur|onclick|ondblclick|onfocus|onkeydown|onkeypress|onkeyup' +
+        '|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|rel|rev' +
+        '|shape<circle?default?poly?rect|style|tabindex|title|target|type],' +
+        'a[accesskey|charset|class|coords|dir<ltr?rtl|href|hreflang|id|lang|name' +
+        '|onblur|onclick|ondblclick|onfocus|onkeydown|onkeypress|onkeyup' +
+        '|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|rel|rev' +
+        '|shape<circle?default?poly?rect|style|tabindex|title|target|type],' +
+        '|title],' +
+        'address[class|align|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown' +
+        '|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover' +
+        '|onmouseup|style|title],' +
+        'area[accesskey|alt|class|coords|dir<ltr?rtl|href|id|lang|nohref<nohref' +
+        '|onblur|onclick|ondblclick|onfocus|onkeydown|onkeypress|onkeyup' +
+        '|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup' +
+        '|shape<circle?default?poly?rect|style|tabindex|title|target],' +
+        'blockquote[cite|class|dir<ltr?rtl|id|lang|onclick|ondblclick' +
+        '|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout' +
+        '|onmouseover|onmouseup|style|title],' +
+        'br[class|clear<all?left?none?right|id|style|title],' +
+        'button[accesskey|class|dir<ltr?rtl|disabled<disabled|id|lang|name|onblur' +
+        '|onclick|ondblclick|onfocus|onkeydown|onkeypress|onkeyup|onmousedown' +
+        '|onmousemove|onmouseout|onmouseover|onmouseup|style|tabindex|title|type' +
+        '|value],' +
+        'caption[align<bottom?left?right?top|class|dir<ltr?rtl|id|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'center[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style' +
+        '|title],' +
+        'code[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style' +
+        '|title],' +
+        'del[cite|class|datetime|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown' +
+        '|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover' +
+        '|onmouseup|style|title],' +
+        'div[align<center?justify?left?right|class|dir<ltr?rtl|id|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'fieldset[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style' +
+        '|title],' +
+        'frame[class|frameborder|id|longdesc|marginheight|marginwidth|name' +
+        '|noresize<noresize|scrolling<auto?no?yes|src|style|title],' +
+        'h1[align<center?justify?left?right|class|dir<ltr?rtl|id|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'h2[align<center?justify?left?right|class|dir<ltr?rtl|id|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'h3[align<center?justify?left?right|class|dir<ltr?rtl|id|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'h4[align<center?justify?left?right|class|dir<ltr?rtl|id|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'h5[align<center?justify?left?right|class|dir<ltr?rtl|id|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'h6[align<center?justify?left?right|class|dir<ltr?rtl|id|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'hr[align<center?left?right|class|dir<ltr?rtl|id|lang|noshade<noshade|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|size|style|title|width],' +
+        'iframe[align<bottom?left?middle?right?top|class|frameborder|height|id' +
+        '|longdesc|marginheight|marginwidth|name|scrolling<auto?no?yes|src|style' +
+        '|title|width],' +
+        'img[align<bottom?left?middle?right?top|alt|border|class|dir<ltr?rtl|height' +
+        '|hspace|id|ismap<ismap|lang|longdesc|name|onclick|ondblclick|onkeydown' +
+        '|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover' +
+        '|onmouseup|src|style|title|usemap|vspace|width],' +
+        'input[accept|accesskey|align<bottom?left?middle?right?top|alt' +
+        '|checked<checked|class|dir<ltr?rtl|disabled<disabled|id|ismap<ismap|lang' +
+        '|maxlength|name|onblur|onclick|ondblclick|onfocus|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|onselect' +
+        '|readonly<readonly|size|src|style|tabindex|title' +
+        '|type<button?checkbox?file?hidden?image?password?radio?reset?submit?text' +
+        '|usemap|value],' +
+        'label[accesskey|class|dir<ltr?rtl|for|id|lang|onblur|onclick|ondblclick' +
+        '|onfocus|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout' +
+        '|onmouseover|onmouseup|style|title],' +
+        'legend[align<bottom?left?right?top|accesskey|class|dir<ltr?rtl|id|lang' +
+        '|onclick|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'li[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress|onkeyup' +
+        '|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style|title|type' +
+        '|value],' +
+        'link[charset|class|dir<ltr?rtl|href|hreflang|id|lang|media|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|rel|rev|style|title|target|type],' +
+        'map[class|dir<ltr?rtl|id|lang|name|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style' +
+        '|title],' +
+        'menu[class|compact<compact|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown' +
+        '|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover' +
+        '|onmouseup|style|title],' +
+        'noframes[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style' +
+        '|title],' +
+        'noscript[class|dir<ltr?rtl|id|lang|style|title],' +
+        'ol[class|compact<compact|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown' +
+        '|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover' +
+        '|onmouseup|start|style|title|type],' +
+        'optgroup[class|dir<ltr?rtl|disabled<disabled|id|label|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'option[class|dir<ltr?rtl|disabled<disabled|id|label|lang|onclick|ondblclick' +
+        '|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout' +
+        '|onmouseover|onmouseup|selected<selected|style|title|value],' +
+        'p[align<center?justify?left?right|class|dir<ltr?rtl|id|lang|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|style|title],' +
+        'param[id|name|type|value|valuetype<DATA?OBJECT?REF],' +
+        'pre/listing/plaintext/xmp[align|class|dir<ltr?rtl|id|lang|onclick|ondblclick' +
+        '|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout' +
+        '|onmouseover|onmouseup|style|title|width],' +
+        'small[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style' +
+        '|title],' +
+        'span[align<center?justify?left?right|class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown' +
+        '|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover' +
+        '|onmouseup|style|title],' +
+        'strike[class|class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown' +
+        '|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover' +
+        '|onmouseup|style|title],' +
+        'strong/b[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style' +
+        '|title],' +
+        'style[dir<ltr?rtl|lang|media|title|type],' +
+        'sub[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style' +
+        '|title],' +
+        'table[align<center?left?right|bgcolor|border|cellpadding|cellspacing|class' +
+        '|dir<ltr?rtl|frame|height|id|lang|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|rules' +
+        '|style|summary|title|width],' +
+        'tbody[align<center?char?justify?left?right|char|class|charoff|dir<ltr?rtl|id' +
+        '|lang|onclick|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown' +
+        '|onmousemove|onmouseout|onmouseover|onmouseup|style|title' +
+        '|valign<baseline?bottom?middle?top],' +
+        'td[abbr|align<center?char?justify?left?right|axis|bgcolor|char|charoff|class' +
+        '|colspan|dir<ltr?rtl|headers|height|id|lang|nowrap<nowrap|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|rowspan|scope<col?colgroup?row?rowgroup' +
+        '|style|title|valign<baseline?bottom?middle?top|width],' +
+        'textarea[accesskey|class|cols|dir<ltr?rtl|disabled<disabled|id|lang|name' +
+        '|onblur|onclick|ondblclick|onfocus|onkeydown|onkeypress|onkeyup' +
+        '|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|onselect' +
+        '|readonly<readonly|rows|style|tabindex|title],' +
+        'tfoot[align<center?char?justify?left?right|char|charoff|class|dir<ltr?rtl|id' +
+        '|lang|onclick|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown' +
+        '|onmousemove|onmouseout|onmouseover|onmouseup|style|title' +
+        '|valign<baseline?bottom?middle?top],' +
+        'th[abbr|align<center?char?justify?left?right|axis|bgcolor|char|charoff|class' +
+        '|colspan|dir<ltr?rtl|headers|height|id|lang|nowrap<nowrap|onclick' +
+        '|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown|onmousemove' +
+        '|onmouseout|onmouseover|onmouseup|rowspan|scope<col?colgroup?row?rowgroup' +
+        '|style|title|valign<baseline?bottom?middle?top|width],' +
+        'thead[align<center?char?justify?left?right|char|charoff|class|dir<ltr?rtl|id' +
+        '|lang|onclick|ondblclick|onkeydown|onkeypress|onkeyup|onmousedown' +
+        '|onmousemove|onmouseout|onmouseover|onmouseup|style|title' +
+        '|valign<baseline?bottom?middle?top],' +
+        'title[dir<ltr?rtl|lang],' +
+        'tr[abbr|align<center?char?justify?left?right|bgcolor|char|charoff|class' +
+        '|rowspan|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress' +
+        '|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style' +
+        '|title|valign<baseline?bottom?middle?top],' +
+        'tt[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress|onkeyup' +
+        '|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style|title],' +
+        'u[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress|onkeyup' +
+        '|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style|title],' +
+        'ul[class|compact<compact|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown' +
+        '|onkeypress|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover' +
+        '|onmouseup|style|title|type]',
         directionality: 'ltr',
         // this.settings.lang çalıştırılacak!
         language: 'tr',
@@ -483,8 +663,6 @@ export default {
           token: this.token
         }
       }
-      console.log(data)
-
       await this.$store.dispatch('createData', data)
     },
     // update

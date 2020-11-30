@@ -64,7 +64,7 @@
           <b-tabs>
             <b-tab :title="$t('pariette.select')" :active="isSelect">
               <b-row class="iLovePariette-gallery-operation">
-                <b-col v-for="(img,i) in galleryRows" :id="'cover'+i" :key="i" cols="3" class="iLovePariette-gallery-operation-list">
+                <b-col v-for="(img,i) in galleryRows" :id="'cover'+i" :key="'gal' + i" cols="3" class="iLovePariette-gallery-operation-list">
                   <figure>
                     <img :title="img.title" :src="cdnImgUrl + img.photo">
                     <div class="iLovePariette-gallery-operation-list-bg" :style="{ backgroundImage: 'url(' + cdnImgUrl + img.store + img.photo + ')' }" />
@@ -102,7 +102,7 @@
             </b-tab>
             <b-tab :title="$t('pariette.carousel')">
               <b-row class="iLovePariette-gallery-operation">
-                <b-col v-for="(img,i) in selectedCarousel" :id="'cover'+i" :key="i" cols="3" class="iLovePariette-gallery-operation-list">
+                <b-col v-for="(img,i) in selectedCarousel" :id="'cover'+i" :key="'car' + i" cols="3" class="iLovePariette-gallery-operation-list">
                   <figure>
                     <img :title="img.title" :src="cdnImgUrl + img.photo" style="cursor: default">
                     <div class="iLovePariette-gallery-operation-list-buttons">
@@ -116,7 +116,7 @@
             </b-tab>
             <b-tab :title="$t('pariette.gallery')">
               <b-row class="iLovePariette-gallery-operation">
-                <b-col v-for="(img,i) in selectedGallery" :id="'cover'+i" :key="i" cols="3" class="iLovePariette-gallery-operation-list">
+                <b-col v-for="(img,i) in selectedGallery" :id="'cover'+i" :key="'img' + i" cols="3" class="iLovePariette-gallery-operation-list">
                   <figure>
                     <img :title="img.title" :src="cdnImgUrl + img.name">
                     <div class="iLovePariette-gallery-operation-list-buttons">
@@ -143,8 +143,8 @@
                         {{ $t('pariette.selectCats') }}
                       </template>
                       <b-dropdown-item-button
-                        v-for="option in cats"
-                        :key="option"
+                        v-for="(option, o) in cats"
+                        :key="'opt' + o"
                         @click="catSelected({ option, addTag })"
                       >
                         {{ option.title }}
@@ -153,7 +153,7 @@
                   </b-col>
                   <b-col>
                     <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                      <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                      <li v-for="tag in tags" :key="'tag' + tag" class="list-inline-item">
                         <b-form-tag
                           :title="tag"
                           :disabled="disabled"
@@ -170,7 +170,6 @@
             </b-form-tags>
           </b-form-group>
         </b-col>
-
         <b-col cols="12">
           <b-form-group :class="{ 'iLovePariette-formgroup--error': $v.form.keys.$error }">
             <b-form-tags
@@ -184,7 +183,6 @@
             />
           </b-form-group>
         </b-col>
-
         <b-col cols="2">
           <b-form-group :class="{ 'iLovePariette-formgroup--error': $v.form.lang.$error }" class="123">
             <b-dropdown v-model.trim="$v.form.lang.$model" variant="light" no-outer-focus block>
@@ -682,6 +680,7 @@ export default {
       const data = {
         api: 'canvas-content',
         id: i,
+        slug: this.form.slug,
         form: {
           operation: e,
           web: this.token,
@@ -689,33 +688,30 @@ export default {
           type: this.form.type,
           display: 'web',
           user: this.authUser.access_token,
-          title: this.form.title,
-          cats: this.form.cats,
-          keys: this.form.keys,
           slug: this.form.slug,
-          content: this.form.content,
-          cover: this.form.cover,
+          title: this.form.title,
           status: this.form.status,
-          hot: this.form.hot,
-          spot: this.form.spot,
-          slider: this.form.slider,
-          comment: this.form.comment,
-          api: this.form.api,
-          gallery: this.form.gallery,
-          filter: this.form.filter,
-          carousel: this.form.carousel,
+          cats: this.form.cats ? this.form.cats : null,
+          keys: this.form.keys ? this.form.keys : null,
+          content: this.form.content ? this.form.content : null,
+          cover: this.form.cover ? this.form.cover : null,
+          hot: this.form.hot ? this.form.hot : null,
+          spot: this.form.spot ? this.form.spot : null,
+          slider: this.form.slider ? this.form.slider : null,
+          comment: this.form.comment ? this.form.comment : null,
+          api: this.form.api ? this.form.api : null,
+          gallery: this.form.gallery ? this.form.gallery : null,
+          filter: this.form.filter ? this.form.filter : null,
+          carousel: this.form.carousel ? this.form.carousel : null,
           token: this.token
         }
       }
-      console.log(data)
-
       await this.$store.dispatch('updateData', data)
     },
     async getCanvas (e) {
       const row = await axios.get(`${this.pariette}${this.token}/canvas?url=${e}`)
-      const carousel = await axios.get(`${this.pariette}${this.token}/carousel?display=web&slug=${e}`)
       const canvas = row.data.data[0]
-      const content = row.data.data[0].content.filter(l => l.lang === this.settings.lang)[0]
+      const content = canvas.content.filter(l => l.lang === this.settings.lang)[0]
       this.form.canvas = content.canvas
       this.form.content = content.content
       this.form.cover = content.cover
@@ -724,7 +720,7 @@ export default {
       this.selectedGallery = this.form.gallery
       this.contentId = content.id
       this.form.keys = content.keys
-      this.form.order = content.order
+      this.form.order = content.order ? content.order : 1
       this.form.status = content.status
       this.form.title = content.title
       this.form.slug = canvas.slug
@@ -735,8 +731,11 @@ export default {
       this.form.slider = canvas.slider
       this.form.comment = canvas.comment
       this.form.api = canvas.api
-      this.form.carousel = carousel.data[0].slider
-      this.selectedCarousel = this.form.carousel
+      const carousel = await axios.get(`${this.pariette}${this.token}/carousel?display=web&slug=${e}`)
+      if (carousel.data.length >= 1) {
+        this.form.carousel = carousel.data[0].slider
+        this.selectedCarousel = this.form.carousel
+      }
     }
   },
   validations () {

@@ -32,8 +32,7 @@ export default {
   PAGE_LOCATION (state, payload) {
     this.app.router.push({ name: 'index' })
   },
-  SET_USER (user) {
-    console.log(user)
+  SET_USER (state, user) {
     localStorage.setItem('user', JSON.stringify(user))
     this.commit('CONTROL_USER')
     this.commit('modal', false)
@@ -44,8 +43,10 @@ export default {
     this.commit('DELETE_ERROR_MESSAGES')
   },
   SET_UPDATE_OK (state, payload) {
-    // this.app.router.push({ name: 'index' })
+    this.$toast.success('pariette.updateOk')
     console.log(payload)
+    this.app.router.push({ name: 'url', params: { url: payload } })
+    this.commit('DELETE_ERROR_MESSAGES')
   },
   SET_ERROR (state, payload) {
     // this.app.router.push({ name: 'index' })

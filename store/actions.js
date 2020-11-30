@@ -67,11 +67,10 @@ export default {
   async login ({ state, commit }, data) {
     try {
       const user = await axios.post(`${state.pariette}auth/login`, data)
+      console.log(user.data)
       commit('SET_USER', user.data)
-      console.log(user)
       commit('LOCATION_HREF', 'admin')
     } catch (error) {
-      console.log(error)
       if (error.response && error.response.status === 401) {
         throw new Error('Bad credentials')
       }
@@ -85,8 +84,7 @@ export default {
     document.getElementById('loginLoader').style.display = 'block'
     try {
       const user = await axios.post(`${state.pariette}auth/emaillist`, data)
-      // commit('SET_USER', user.data)
-      console.log(user.data)
+      commit('SET_USER', user.data)
       commit('SEND_SUCCESS', this.app.i18n.t('message.success'))
       commit('PAGE_LOCATION', 'index')
       document.getElementById('loginButton').disabled = false
@@ -109,7 +107,7 @@ export default {
       const content = await axios.post(`${state.pariette}${data.api}`, data.form, {
         headers: {
           Accept: 'application/json',
-          Authorization: 'Bearer ' + state.authUser.access_token
+          Authorization: 'Bearer ' + JSON.parse(state.authUser).access_token
         }
       })
       const savedCanvas = {
@@ -126,7 +124,7 @@ export default {
       .post(`${state.pariette}${data.api}`, data.form, {
         headers: {
           Accept: 'application/json',
-          Authorization: 'Bearer ' + state.authUser.access_token
+          Authorization: 'Bearer ' + JSON.parse(state.authUser).access_token
         }
       })
       .then((res) => {
@@ -139,17 +137,23 @@ export default {
       })
   },
   async updateData ({ state, commit }, data) {
-    try {
-      const content = await axios.put(`${state.pariette}${data.api}/${data.id}`, data.form, {
+    console.log(data)
+    return await axios
+      .put(`${state.pariette}${data.api}/${data.id}`, data.form, {
         headers: {
           Accept: 'application/json',
-          Authorization: 'Bearer ' + state.authUser.access_token
+          Authorization: 'Bearer ' + JSON.parse(state.authUser).access_token
         }
       })
-      // commit('SET_UPDATE_OK', content.data.data.title)
-      commit('SET_UPDATE_OK', content.data)
-    } catch (error) {
-      commit('SET_ERROR', error)
-    }
+      .then((res) => {
+        if (res.data.success === true) {
+          commit('SET_UPDATE_OK', data.slug)
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          commit('SET_ERROR', err.response)
+        }
+      })
   }
 }

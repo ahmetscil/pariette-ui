@@ -7,14 +7,14 @@
           :placeholder="$t('pariette.titleHere')"
           type="text"
           autocomplete="off"
-          @keyup="disabledInput === true ? url_slug(form.title) : ''"
+          @keyup="disabledInput === false ? url_slug(form.title) : ''"
         />
       </b-form-group>
       <b-form-group :class="{ 'iLovePariette-formgroup--error': $v.form.slug.$error }" class="iLovePariette-slider-fixedslug">
         <b-form-input
-          v-model="$v.form.slug.$model"
+          v-model.trim="$v.form.slug.$model"
           v-b-tooltip.hover.bottom
-          :readonly="disabledInput"
+          :disabled="disabledInput"
           :placeholder="$t('pariette.slug')"
           type="text"
           :title="$t('pariette.slugInfo')"
@@ -230,12 +230,22 @@
           <nuxt-link :to="{name: 'index'}" class="iLovePariette-panel-buttons-cancel">
             <i class="fas fa-times" /> {{ $t('pariette.btncancel') }}
           </nuxt-link>
-          <b-button type="button" class="iLovePariette-panel-buttons-publish" @click="submitForm(1, canvasId)">
-            <i class="fas fa-check" /> {{ $t('pariette.btnupdate') }} as
+          <b-button type="button" class="iLovePariette-panel-buttons-publish" @click="updateForm(1, contentId)">
+            <i class="fas fa-check" /> {{ $t('pariette.btnupdate') }}
           </b-button>
-          {{ canvasStatus }}
-          <b-button type="button" size="sm" class="iLovePariette-panel-buttons-save" @click="submitForm(2, canvasId)">
+          <b-button type="button" size="sm" class="iLovePariette-panel-buttons-save" @click="updateForm(2, contentId)">
             <i class="fas fa-save" /> {{ $t('pariette.btnchange') }}
+          </b-button>
+        </b-col>
+        <b-col v-else cols="12" class="iLovePariette-panel-buttons">
+          <nuxt-link :to="{name: 'index'}" class="iLovePariette-panel-buttons-cancel">
+            <i class="fas fa-times" /> {{ $t('pariette.btncancel') }}
+          </nuxt-link>
+          <b-button type="button" class="iLovePariette-panel-buttons-publish" @click="submitForm(1)">
+            <i class="fas fa-check" /> {{ $t('pariette.btnpublish') }}
+          </b-button>
+          <b-button type="button" size="sm" class="iLovePariette-panel-buttons-save" @click="submitForm(2)">
+            <i class="fas fa-save" /> {{ $t('pariette.btnsave') }}
           </b-button>
         </b-col>
       </b-row>
@@ -250,15 +260,18 @@ export default {
   data () {
     return {
       canvasStatus: 4,
-      canvasId: null,
-      canvasContentId: null,
       disabledInput: false,
       galleryTitle: null,
       galleryFilter: null,
+      contentType: null,
+      contentId: null,
+      sliderAnimation: 'asc__su-carousel-slider-animation asc__su-carousel-slider-animation-up',
       selectedGallery: [],
       selectedGalleryFilter: [],
       selectedCarousel: [],
+      explformkeys: [],
       isUpload: false,
+      addGall: true,
       isSelect: true,
       operation: this.$route.query.operation ? this.$route.query.operation : null,
       setting: this.$route.query.type,
@@ -474,14 +487,25 @@ export default {
         content_style: 'body { }'
       },
       form: {
+        web: null,
+        lang: null,
+        type: this.$route.query.operation,
+        user: null,
+        title: null,
+        cats: [],
+        keys: null,
+        slug: null,
+        content: null,
+        cover: null,
+        status: 2,
+        hot: false,
+        spot: false,
+        slider: false,
+        comment: false,
+        api: false,
         gallery: [],
         filter: [],
-        carousel: [],
-        slug: '',
-        keys: [],
-        lang: '',
-        title: '',
-        content: ''
+        carousel: []
       }
     }
   },
@@ -489,14 +513,12 @@ export default {
     ...mapState(['cdnImgUrl', 'layout', 'pariette', 'token', 'authUser', 'cats', 'galleryRows', 'settings'])
   },
   mounted () {
-    if (this.$route.query.content) {
+    if (this.$route.query.type) {
+      this.contentType = this.$route.query.type
+    } else {
       this.getCanvas(this.$route.query.content)
     }
-    if (this.$route.query.operation) {
-      this.operation = this.$route.query.operation
-    } else {
-      this.operation = null
-    }
+    this.operation = this.$route.query.operation ? this.$route.query.operation : null
     this.getLayout()
     this.getCats(null)
     this.getGall(null)
@@ -533,23 +555,15 @@ export default {
       this.galleryTitle = e
       console.log(e)
     },
+    sliderTranslate () {
+      this.sliderAnimation = 'asc__su-carousel-slider-animation'
+    },
+    sliderTranslated () {
+      this.sliderAnimation = 'asc__su-carousel-slider-animation asc__su-carousel-slider-animation-up'
+    },
     url_slug (s) {
       if (s) {
-        const trMap = {
-          'çÇ ': 'c',
-          'ğĞ ': 'g',
-          'şŞ ': 's',
-          'üÜ ': 'u',
-          'ıİ ': 'i',
-          'öÖ ': 'o'
-        }
-        for (const key in trMap) {
-          s = s.replace(new RegExp('[' + key + ']', 'g'), trMap[key])
-        }
-        this.form.slug = s.replace(/[^-a-zA-Z0-9\s]+/ig, '') // remove non-alphanumeric chars
-          .replace(/\s/gi, '-')
-          .replace(/[-]+/gi, '-')
-          .toLowerCase()
+        this.form.slug = s.toLowerCase()
       }
     },
     // photos
@@ -611,32 +625,75 @@ export default {
       // console.log(message)
       // console.log(xhr)
     },
-    // canvas
-    submitForm (status, id) {
+    // create
+    submitForm (e) {
       if (this.$v.form.$invalid) {
         this.$store.commit('SEND_ERROR', this.$t('pariette.validationError'))
       } else {
         this.$store.commit('SEND_PROGRESSING', this.$t('pariette.progressing'))
-        this.update(status, id)
+        this.form.status = e
+        console.log(e)
+        console.log(this.canvasStatus)
+        if (this.canvasStatus === 4) {
+          this.convert(this.contentId)
+        } else {
+          this.update()
+        }
       }
     },
-
-    async update (cstatus, cid) {
+    updateForm (e, i) {
+      if (this.$v.form.$invalid) {
+        this.$store.commit('SEND_ERROR', this.$t('pariette.validationError'))
+      } else {
+        this.$store.commit('SEND_PROGRESSING', this.$t('pariette.progressing'))
+        this.update(e, i)
+      }
+    },
+    async convert (i) {
       const data = {
-        api: 'canvas',
-        id: cid,
+        api: 'canvas-convert',
         slug: this.form.slug,
         form: {
-          contentid: this.canvasContentId,
-          contentStatus: this.canvasStatus,
           web: this.token,
           lang: this.form.lang,
-          type: 'content',
+          type: this.form.type,
           display: 'web',
           user: this.authUser.access_token,
           title: this.form.title,
           slug: this.form.slug,
-          status: cstatus,
+          status: this.form.status,
+          cats: this.form.cats ? this.form.cats : null,
+          keys: this.form.keys ? this.form.keys : null,
+          content: this.form.content ? this.form.content : null,
+          cover: this.form.cover ? this.form.cover : null,
+          hot: this.form.hot ? this.form.hot : null,
+          spot: this.form.spot ? this.form.spot : null,
+          slider: this.form.slider ? this.form.slider : null,
+          comment: this.form.comment ? this.form.comment : null,
+          api: this.form.api ? this.form.api : null,
+          gallery: this.form.gallery ? this.form.gallery : null,
+          filter: this.form.filter ? this.form.filter : null,
+          carousel: this.form.carousel ? this.form.carousel : null,
+          token: this.token
+        }
+      }
+      await this.$store.dispatch('updateData', data)
+    },
+    async update (e, i) {
+      const data = {
+        api: 'canvas-content',
+        id: i,
+        slug: this.form.slug,
+        form: {
+          operation: e,
+          web: this.token,
+          lang: this.form.lang,
+          type: this.form.type,
+          display: 'web',
+          user: this.authUser.access_token,
+          title: this.form.title,
+          slug: this.form.slug,
+          status: this.form.status,
           cats: this.form.cats ? this.form.cats : null,
           keys: this.form.keys ? this.form.keys : null,
           content: this.form.content ? this.form.content : null,
@@ -655,35 +712,25 @@ export default {
       await this.$store.dispatch('updateData', data)
     },
     async getCanvas (e) {
-      const row = await axios.get(`${this.pariette}canvas/${e}`, {
-        headers: {
-          Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('user')).access_token
-        }
-      })
-      const canvas = row.data.data
-      const content = canvas.content[0]
-
-      this.canvasStatus = parseInt(canvas.status)
-      this.canvasId = parseInt(canvas.id)
-      this.canvasContentId = content.id
+      console.log(e)
+      const row = await axios.get(`${this.pariette}${this.token}/canvas?url=${e}`)
+      const canvas = row.data.data[0]
+      console.log(canvas)
+      const content = canvas.content.filter(l => l.lang === this.settings.lang)[0]
+      this.canvasStatus = canvas.status
       this.form.canvas = content.canvas
       this.form.content = content.content ? content.content : null
       this.form.cover = content.cover ? content.cover : null
       this.form.filter = content.filter ? content.filter : null
       this.form.gallery = content.gallery ? content.gallery : null
       this.selectedGallery = this.form.gallery ? this.form.gallery : null
+      this.contentId = content.id
       this.form.keys = content.keys
       this.form.order = content.order ? content.order : 1
-      this.form.status = parseInt(content.status)
+      this.form.status = content.status
       this.form.title = content.title
       this.form.slug = canvas.slug
-
-      if (this.canvasStatus === 4) {
-        this.disabledInput = true
-      } else {
-        this.disabledInput = false
-      }
-
+      this.disabledInput = true
       this.form.cats = canvas.cats
       this.form.hot = canvas.hot
       this.form.spot = canvas.spot

@@ -17,12 +17,18 @@
     >
       <b-row class="asc__su-parietteAdmin">
         <b-col cols="12">
-          <b-button class="asc__su-parietteAdmin-nav-title" @click="updateThis()">
-            UPDATE
-          </b-button>
-        </b-col>
-        <b-col cols="12">
           <div class="accordion" role="tablist">
+            <h3 v-if="$route.params.url">
+              UPDATE
+            </h3>
+            <b-card v-if="$route.params.url" no-body class="mb-1">
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-button block class="asc__su-parietteAdmin-nav-title" @click="updateThis()">
+                  Update This Content
+                </b-button>
+              </b-card-header>
+            </b-card>
+            <h3>NEW CONTENT</h3>
             <b-card v-for="(nav, idx) in navigation" :key="'navc' + idx" no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
                 <b-button v-b-toggle="'accordion-' + idx" block class="asc__su-parietteAdmin-nav-title">
@@ -32,10 +38,12 @@
               <b-collapse :id="'accordion-' + idx" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
                   <ul v-if="nav.sub.length >= 1" class="asc__su-parietteAdmin-nav">
-                    <li v-for="(sub, idy) in nav.sub" :key="'sub' + idy">
-                      <nuxt-link :to="{name: 'url', params: {url: 'canvas'}, query: { 'operation': sub.operation, 'type': sub.type }}">
-                        {{ sub.title }}
-                      </nuxt-link>
+                    <li
+                      v-for="(sub, idy) in nav.sub"
+                      :key="'sub' + idy"
+                      @click="createNew('url', 'canvas', sub.type, sub.operation)"
+                    >
+                      {{ sub.title }}
                     </li>
                   </ul>
                 </b-card-body>
@@ -83,11 +91,33 @@ export default {
       ]
     }
   },
-  computed: mapState(['settings', 'authUser', 'showPariette']),
+  computed: mapState(['settings', 'authUser', 'showPariette', 'token', 'authUser']),
   mounted () {
     this.$store.commit('CONTROL_USER')
   },
   methods: {
+    async createNew (n, p, o, t) {
+      const autosave = 'autosave' + Math.floor(Math.random() * 10000000000)
+      const data = {
+        isauto: 1,
+        api: 'canvas',
+        name: n,
+        params: p,
+        operation: o,
+        type: t,
+        form: {
+          lang: this.settings.lang,
+          web: this.token,
+          type: t,
+          user: this.authUser.access_token,
+          title: autosave,
+          slug: autosave,
+          status: 4, // autosave
+          token: this.token
+        }
+      }
+      await this.$store.dispatch('createData', data)
+    },
     updateThis () {
       this.$store.commit('PARIETTE', true)
       this.$router.push({ name: 'url', params: { url: 'canvas' }, query: { content: this.$route.params.url, operation: 'update' } })

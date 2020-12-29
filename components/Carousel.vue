@@ -121,7 +121,7 @@ export default {
       transition: 0.3s
     .asc__su-carousel-slider
       width: 100%
-      background: #000
+      background: #1f1f1f
       & a
         display: block
       .asc__su-carousel-slider-item

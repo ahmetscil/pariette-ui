@@ -128,7 +128,11 @@ export default {
         }
       })
       .then((res) => {
-        commit('SET_COMPLETE', res.data)
+        if (data.isauto === 1) {
+          this.app.router.push({ name: 'url', params: { url: 'canvas' }, query: { content: res.data.data.slug, operation: 'update' } })
+        } else {
+          commit('SET_COMPLETE', res.data)
+        }
       })
       .catch((err) => {
         if (err.response) {
@@ -137,7 +141,6 @@ export default {
       })
   },
   async updateData ({ state, commit }, data) {
-    console.log(data)
     return await axios
       .put(`${state.pariette}${data.api}/${data.id}`, data.form, {
         headers: {
@@ -147,7 +150,9 @@ export default {
       })
       .then((res) => {
         if (res.data.success === true) {
-          commit('SET_UPDATE_OK', data.slug)
+          commit('SET_UPDATE_OK', res.data.data.slug)
+        } else {
+          commit('SET_ERROR', res.data.message)
         }
       })
       .catch((err) => {

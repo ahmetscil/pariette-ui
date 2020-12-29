@@ -76,16 +76,17 @@ export default {
     async asyncData (status) {
       const carouselDesktopData = await axios.get(`${this.pariette}${this.token}/carousel?display=web&slug=${this.$route.params.url}`)
       const carouselMobileData = await axios.get(`${this.pariette}${this.token}/carousel?display=mobile&slug=${this.$route.params.url}`)
+      this.desktopSliders = carouselDesktopData.data
+      this.mobileSliders = carouselMobileData.data
+
       const canvasData = await axios.get(`${this.pariette}${this.token}/canvas?url=${this.$route.params.url}&status=${status}`)
-      if (canvasData.data.data.length >= 1) {
-        this.canvas = canvasData.data.data
+      if (canvasData.data.length >= 1) {
+        this.canvas = canvasData.data
+        this.getLayout(this.canvas[0].type)
+        this.pageTitle = this.canvas[0].title
       } else {
         this.$router.push({ name: 'index' })
       }
-      this.getLayout(canvasData.data.data[0].type)
-      this.desktopSliders = carouselDesktopData.data
-      this.mobileSliders = carouselMobileData.data
-      this.pageTitle = canvasData.data.data[0].title
     },
     getLayout (e) {
       this.$store.dispatch('getLayout', {
